@@ -1,0 +1,129 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Examen Unidad 6 - Ecosistemas</title>
+<style>
+body { font-family: Arial; background:#121212; color:white; text-align:center; }
+.container { max-width:800px; margin:auto; }
+button { padding:10px; margin-top:10px; }
+.hidden { display:none; }
+.question { margin:20px 0; }
+.timer { font-size:20px; color:#00ffcc; }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Examen Unidad 6 - Ecosistemas</h1>
+
+<div id="inicio">
+<input type="text" id="nombre" placeholder="Nombre"><br><br>
+<input type="text" id="cuenta" placeholder="Número de cuenta"><br><br>
+<button onclick="iniciar()">Iniciar examen</button>
+</div>
+
+<div id="quiz" class="hidden">
+<div class="timer" id="timer">01:05</div>
+<form id="formulario"></form>
+</div>
+
+<div id="resultado" class="hidden">
+<h2>Resultado</h2>
+<p id="calificacion"></p>
+<button onclick="descargarPDF()">Descargar PDF</button>
+</div>
+
+</div>
+
+<script>
+const preguntas = [
+{q:"Un ecosistema es:", o:["Grupo sin interacción","Sistema de seres vivos y ambiente","Solo animales","Solo plantas"], a:1},
+{q:"Factores bióticos son:", o:["No vivos","Seres vivos","Clima","Agua"], a:1},
+{q:"Factores abióticos:", o:["Seres vivos","Medio físico","Animales","Plantas"], a:1},
+{q:"Productores:", o:["Consumen","Producen alimento","Descomponen","Depredan"], a:1},
+{q:"Ejemplo de productor:", o:["León","Hongo","Planta","Bacteria"], a:2},
+{q:"Consumidor primario:", o:["Carnívoro","Herbívoro","Descomponedor","Autótrofo"], a:1},
+{q:"Consumidor secundario:", o:["Planta","Carnívoro","Hongo","Alga"], a:1},
+{q:"Descomponedores:", o:["Productores","Reciclan materia","Depredan","Fotosintetizan"], a:1},
+{q:"Ejemplo descomponedor:", o:["Perro","Hongo","Águila","Pasto"], a:1},
+{q:"Luz solar es factor:", o:["Biótico","Abiótico","Genético","Celular"], a:1},
+
+{q:"Temperatura es:", o:["Biótico","Abiótico","Orgánico","Vivo"], a:1},
+{q:"Depredación:", o:["Cooperación","Uno se come a otro","Mutualismo","Parasitismo"], a:1},
+{q:"Mutualismo:", o:["Ambos ganan","Uno pierde","Ninguno gana","Depredación"], a:0},
+{q:"Parasitismo:", o:["Ambos ganan","Uno se beneficia y otro se daña","Neutral","Depredación"], a:1},
+{q:"Comensalismo:", o:["Ambos pierden","Uno gana y otro no afecta","Depredación","Competencia"], a:1},
+{q:"Competencia:", o:["Cooperación","Lucha por recursos","Mutualismo","Parasitismo"], a:1},
+{q:"Energía fluye desde:", o:["Plantas","Sol","Animales","Suelo"], a:1},
+{q:"La energía termina como:", o:["Agua","Calor","Luz","Materia"], a:1},
+{q:"Cadena alimenticia:", o:["Ciclo","Flujo energía","Mutación","Clonación"], a:1},
+{q:"Materia se:", o:["Pierde","Recicla","Destruye","Crea"], a:1},
+
+{q:"Ciclo del agua:", o:["Materia","Energía","Clima","Luz"], a:0},
+{q:"Ciclo del carbono:", o:["Energía","Materia","Luz","Clima"], a:1},
+{q:"Individuo:", o:["Grupo","Un ser vivo","Población","Ecosistema"], a:1},
+{q:"Población:", o:["Distintas especies","Misma especie","Clima","Energía"], a:1},
+{q:"Comunidad:", o:["Una especie","Varias especies","Clima","Energía"], a:1},
+{q:"Ecosistema incluye:", o:["Solo vivos","Vivos y ambiente","Solo agua","Solo plantas"], a:1},
+{q:"Biosfera:", o:["Parte","Todo el planeta","Clima","Agua"], a:1},
+{q:"Ecosistema terrestre:", o:["Océano","Bosque","Río","Lago"], a:1},
+{q:"Ecosistema acuático:", o:["Desierto","Mar","Selva","Bosque"], a:1},
+{q:"Humedales son:", o:["Terrestres","Mixtos","Aéreos","Secos"], a:1}
+];
+
+let actual=0,respuestas=[],tiempo=65,intervalo;
+
+function iniciar(){
+document.getElementById("inicio").classList.add("hidden");
+document.getElementById("quiz").classList.remove("hidden");
+mostrar();
+}
+
+function mostrar(){
+if(actual>=preguntas.length){fin();return;}
+let p=preguntas[actual];
+let html="<div class='question'><h3>"+(actual+1)+". "+p.q+"</h3>";
+p.o.forEach((op,i)=>{
+html+=`<label><input type="radio" name="r" value="${i}"> ${op}</label><br>`;
+});
+html+="<button type='button' onclick='sig()'>Siguiente</button></div>";
+document.getElementById("formulario").innerHTML=html;
+
+tiempo=65;
+clearInterval(intervalo);
+intervalo=setInterval(()=>{
+tiempo--;
+let m=Math.floor(tiempo/60),s=tiempo%60;
+document.getElementById("timer").innerText=
+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+if(tiempo<=0) sig();
+},1000);
+}
+
+function sig(){
+let sel=document.querySelector('input[name="r"]:checked');
+respuestas.push(sel?parseInt(sel.value):-1);
+actual++;mostrar();
+}
+
+function fin(){
+clearInterval(intervalo);
+document.getElementById("quiz").classList.add("hidden");
+document.getElementById("resultado").classList.remove("hidden");
+
+let c=0;
+preguntas.forEach((p,i)=>{if(p.a===respuestas[i])c++;});
+let cal=(c/preguntas.length)*10;
+document.getElementById("calificacion").innerText=
+"Calificación: "+cal.toFixed(2)+" / 10";
+}
+
+function descargarPDF(){window.print();}
+</script>
+
+</body>
+</html>
+```
